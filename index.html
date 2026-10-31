@@ -1726,7 +1726,7 @@
         const orderForm = document.getElementById('orderForm');
         const formSuccess = document.getElementById('formSuccess');
         const CONTACT_EMAIL = 'mikhailden3@gmail.com';
-        const FORMSPREE_ENDPOINT = '';
+        const FORM_ENDPOINT = 'https://usebasin.com/f/a6208cef7864';
 
         function mailtoFallback(data) {
             const subject = encodeURIComponent('Заявка с сайта WallMaster');
@@ -1747,11 +1747,11 @@
                 service: document.getElementById('service').selectedOptions[0].textContent,
                 message: document.getElementById('message').value.trim(),
             };
-            if (!FORMSPREE_ENDPOINT) {
+            if (!FORM_ENDPOINT) {
                 mailtoFallback(data);
                 return;
             }
-            fetch(FORMSPREE_ENDPOINT, {
+            fetch(FORM_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                 body: JSON.stringify({
