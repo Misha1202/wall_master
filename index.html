@@ -1725,10 +1725,47 @@
 
         const orderForm = document.getElementById('orderForm');
         const formSuccess = document.getElementById('formSuccess');
+        const CONTACT_EMAIL = 'mikhailden3@gmail.com';
+        const FORMSPREE_ENDPOINT = '';
+
+        function mailtoFallback(data) {
+            const subject = encodeURIComponent('Заявка с сайта WallMaster');
+            const body = encodeURIComponent(
+                'Имя: ' + data.name + '\n' +
+                'Телефон: ' + data.phone + '\n' +
+                'Услуга: ' + data.service + '\n' +
+                'Описание: ' + data.message
+            );
+            window.location.href = 'mailto:' + CONTACT_EMAIL + '?subject=' + subject + '&body=' + body;
+        }
+
         orderForm.addEventListener('submit', e => {
             e.preventDefault();
-            orderForm.style.display = 'none';
-            formSuccess.classList.add('show');
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                service: document.getElementById('service').selectedOptions[0].textContent,
+                message: document.getElementById('message').value.trim(),
+            };
+            if (!FORMSPREE_ENDPOINT) {
+                mailtoFallback(data);
+                return;
+            }
+            fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    _subject: 'Заявка с сайта WallMaster — ' + data.name,
+                    name: data.name,
+                    phone: data.phone,
+                    service: data.service,
+                    message: data.message || '(без описания)',
+                }),
+            }).then(res => {
+                if (!res.ok) throw new Error('submit failed');
+                orderForm.style.display = 'none';
+                formSuccess.classList.add('show');
+            }).catch(() => mailtoFallback(data));
         });
 
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
